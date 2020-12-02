@@ -1,11 +1,20 @@
 const express = require("express");
-const { validateUserId } = require("../middleware/user-middleware");
+const {
+  validateUserId,
+  validateUser,
+} = require("../middleware/user-middleware");
 const Helper = require("./userDb");
 
 const router = express.Router();
 
-router.post("/", (req, res) => {
-  // do your magic!
+router.post("/", validateUser, async (req, res) => {
+  const user = req.body;
+  try {
+    await Helper.insert(user);
+    res.status(200).json(user);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 });
 
 router.post("/:id/posts", async (req, res) => {});
@@ -35,11 +44,7 @@ router.put("/:id", (req, res) => {
   // do your magic!
 });
 
-//custom middleware
-
-function validateUser(req, res, next) {
-  // do your magic!
-}
+//custom middlewar
 
 function validatePost(req, res, next) {
   // do your magic!
