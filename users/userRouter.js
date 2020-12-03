@@ -2,8 +2,10 @@ const express = require("express");
 const {
   validateUserId,
   validateUser,
+  validatePost,
 } = require("../middleware/user-middleware");
 const Helper = require("./userDb");
+const PostHelper = require("../posts/postDb");
 
 const router = express.Router();
 
@@ -17,7 +19,14 @@ router.post("/", validateUser, async (req, res) => {
   }
 });
 
-router.post("/:id/posts", async (req, res) => {});
+router.post("/:id/posts", validateUserId, validatePost, async (req, res) => {
+  try {
+    const post = PostHelper.insert(post);
+    res.status(201).json(post);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
 
 router.get("/", async (req, res) => {
   try {
